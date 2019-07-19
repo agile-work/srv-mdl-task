@@ -1,0 +1,54 @@
+{
+    "params": [],
+    "tasks": [
+        {
+            "task": "create_table",
+            "sequence": 0,
+            "exec_action": "exec_query",
+            "exec_address": "local",
+            "exec_payload": "CREATE TABLE {job.schema_code} ( id CHARACTER VARYING DEFAULT uuid_generate_v1() NOT NULL, data JSONB DEFAULT '[]'::JSONB NOT NULL, created_by CHARACTER VARYING NOT NULL, created_at TIMESTAMPTZ NOT NULL, updated_by CHARACTER VARYING NOT NULL, updated_at TIMESTAMPTZ NOT NULL, PRIMARY KEY(id));"
+        },
+        {
+            "task": "create_field_name",
+            "sequence": 1,
+            "exec_action": "api_post",
+            "exec_address": "{system.api_url}/core/admin/schemas/{job.schema_code}/fields",
+            "exec_payload": {
+                "code": "description",
+                "schema_code": "{job.schema_code}",
+                "field_type": "text",
+                "name": {
+                    "pt-br": "Descrição"
+                },
+                "description": {
+                    "pt-br": "Descrição do campo descrição"
+                },
+                "active": true,
+                "definitions": {
+                    "display": "multi_line"
+                }
+            }
+        },
+        {
+            "task": "create_field_description",
+            "sequence": 1,
+            "exec_action": "api_post",
+            "exec_address": "{system.api_url}/core/admin/schemas/{job.schema_code}/fields",
+            "exec_payload": {
+                "code": "description",
+                "schema_code": "{job.schema_code}",
+                "field_type": "text",
+                "name": {
+                    "pt-br": "Descrição"
+                },
+                "description": {
+                    "pt-br": "Descrição do campo descrição"
+                },
+                "active": true,
+                "definitions": {
+                    "display": "multi_line"
+                }
+            }
+        }
+    ]
+}

@@ -6,5 +6,9 @@ import (
 )
 
 func main() {
-	shared.ListenAndServe("Task", "localhost", 3020, routes.Setup())
+	shared.ListenAndServe("task", "localhost", 3020, install, routes.Setup())
+}
+
+func install() error {
+	return nil
 }
