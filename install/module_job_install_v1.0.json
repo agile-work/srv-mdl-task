@@ -1,54 +1,163 @@
 {
-    "params": [],
-    "tasks": [
-        {
-            "task": "create_table",
-            "sequence": 0,
-            "exec_action": "exec_query",
-            "exec_address": "local",
-            "exec_payload": "CREATE TABLE {job.schema_code} ( id CHARACTER VARYING DEFAULT uuid_generate_v1() NOT NULL, data JSONB DEFAULT '[]'::JSONB NOT NULL, created_by CHARACTER VARYING NOT NULL, created_at TIMESTAMPTZ NOT NULL, updated_by CHARACTER VARYING NOT NULL, updated_at TIMESTAMPTZ NOT NULL, PRIMARY KEY(id));"
-        },
-        {
-            "task": "create_field_name",
-            "sequence": 1,
-            "exec_action": "api_post",
-            "exec_address": "{system.api_url}/core/admin/schemas/{job.schema_code}/fields",
-            "exec_payload": {
-                "code": "description",
-                "schema_code": "{job.schema_code}",
-                "field_type": "text",
-                "name": {
-                    "pt-br": "Descrição"
-                },
-                "description": {
-                    "pt-br": "Descrição do campo descrição"
-                },
-                "active": true,
-                "definitions": {
-                    "display": "multi_line"
-                }
-            }
-        },
-        {
-            "task": "create_field_description",
-            "sequence": 1,
-            "exec_action": "api_post",
-            "exec_address": "{system.api_url}/core/admin/schemas/{job.schema_code}/fields",
-            "exec_payload": {
-                "code": "description",
-                "schema_code": "{job.schema_code}",
-                "field_type": "text",
-                "name": {
-                    "pt-br": "Descrição"
-                },
-                "description": {
-                    "pt-br": "Descrição do campo descrição"
-                },
-                "active": true,
-                "definitions": {
-                    "display": "multi_line"
-                }
-            }
+  "version": "1.0",
+  "language_code": "en",
+  "content_code": "mdl_task",
+  "params": null,
+  "tasks": [
+    {
+      "sequence": 0,
+      "exec_action": "api_post",
+      "exec_address": "{system.api_host}/api/v1/core/admin/contents",
+      "exec_payload": {
+        "code": "mdl_task",
+        "name": "Pacote de conteúdo de Tasks",
+        "description": "Pacote de conteúdo",
+        "prefix": "tsk",
+        "is_module": true,
+        "is_system": true
+      }
+    },
+    {
+      "sequence": 1,
+      "exec_action": "api_post",
+      "exec_address": "{system.api_host}/api/v1/core/admin/schemas",
+      "exec_payload": {
+        "code": "tasks",
+        "content_code": "mdl_task",
+        "name": "Tasks",
+        "description": "List of tasks"
+      }
+    },
+    {
+      "sequence": 2,
+      "exec_action": "api_post",
+      "exec_address": "{system.api_host}/api/v1/core/admin/schemas/sys_mdl_tsk_tasks/fields",
+      "exec_payload": {
+        "code": "start",
+        "content_code": "mdl_task",
+        "schema_code": "sys_mdl_tsk_tasks",
+        "field_type": "date",
+        "name": "Start",
+        "description": "Task start date",
+        "active": true,
+        "definitions": {
+          "display": "date_time",
+          "format": "DD/MM/YYYY HH:MM",
+          "aggr_rates": null
         }
-    ]
+      }
+    },
+    {
+      "sequence": 2,
+      "exec_action": "api_post",
+      "exec_address": "{system.api_host}/api/v1/core/admin/schemas/sys_mdl_tsk_tasks/fields",
+      "exec_payload": {
+        "code": "finish",
+        "content_code": "mdl_task",
+        "schema_code": "sys_mdl_tsk_tasks",
+        "field_type": "date",
+        "name": "Finish",
+        "description": "Task description",
+        "active": true,
+        "definitions": {
+          "display": "date_time",
+          "format": "DD/MM/YYYY HH:MM",
+          "aggr_rates": null
+        }
+      }
+    },
+    {
+      "sequence": 2,
+      "exec_action": "api_post",
+      "exec_address": "{system.api_host}/api/v1/core/admin/schemas/sys_mdl_tsk_tasks/fields",
+      "exec_payload": {
+        "code": "teste_number",
+        "content_code": "mdl_task",
+        "schema_code": "sys_mdl_tsk_tasks",
+        "field_type": "number",
+        "name": "Teste Number",
+        "description": "Teste Number description",
+        "active": true,
+        "definitions": {
+          "display": "number",
+          "decimals": 2
+        }
+      }
+    },
+    {
+      "sequence": 2,
+      "exec_action": "exec_query",
+      "exec_address": "local",
+      "exec_payload": "ALTER TABLE sys_mdl_tsk_tasks ADD COLUMN mdl_tsk_assignments jsonb"
+    },
+    {
+      "sequence": 1,
+      "exec_action": "api_post",
+      "exec_address": "{system.api_host}/api/v1/core/admin/schemas",
+      "exec_payload": {
+        "code": "baselines",
+        "content_code": "mdl_task",
+        "name": "Baselines",
+        "description": "List of baselines"
+      }
+    },
+    {
+      "sequence": 2,
+      "exec_action": "api_post",
+      "exec_address": "{system.api_host}/api/v1/core/admin/schemas/sys_mdl_tsk_baselines/fields",
+      "exec_payload": {
+        "code": "resource",
+        "content_code": "mdl_task",
+        "schema_code": "sys_mdl_tsk_baselines",
+        "field_type": "lookup",
+        "name": "Resource",
+        "description": "Task assigned resource",
+        "active": true,
+        "definitions": {
+          "display": "select_single",
+          "dataset_code": "ds_resources",
+          "lookup_type": "dynamic",
+          "lookup_label": "name",
+          "lookup_value": "code",
+          "lookup_fields": [
+            {
+              "code": "username",
+              "label": "Code"
+            },
+            {
+              "code": "full_name",
+              "label": "Resource"
+            },
+            {
+              "code": "active",
+              "filter": {
+                "operator": "=",
+                "readonly": "false",
+                "value": "true",
+                "value_type": "constant"
+              },
+              "label": "Active"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "sequence": 1,
+      "exec_action": "api_post",
+      "exec_address": "{system.api_host}/api/v1/core/admin/modules/mdl_tsk_tasks/features",
+      "exec_payload": {
+        "baseline": {
+          "name": "Task",
+          "description": "Task management",
+          "permissions": {
+            "create": "Create",
+            "delete": "Delete",
+            "edit": "Edit",
+            "view": "View All"
+          }
+        }
+      }
+    }
+  ]
 }

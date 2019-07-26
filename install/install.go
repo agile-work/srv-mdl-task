@@ -1,6 +1,8 @@
 package install
 
 import (
+	"fmt"
+
 	"github.com/agile-work/srv-mdl-shared/models/job"
 	"github.com/agile-work/srv-mdl-shared/models/module"
 	"github.com/agile-work/srv-shared/constants"
@@ -20,16 +22,19 @@ func Init() error {
 		return err
 	}
 
-	jobInstance := &job.Instance{}
-	if err := jobInstance.CreateFromJSON(trs, "admin", "./install/test.json", 60, make(map[string]interface{})); err != nil {
-		trs.Rollback()
-		return err
-	}
-
 	if err := mdl.Register(trs); err != nil {
 		trs.Rollback()
 		return err
 	}
+
+	jobInstance := &job.Instance{}
+	id, err := jobInstance.CreateFromJSON(trs, "admin", "./install/module_job_install_v1.0.json", 60, make(map[string]interface{}))
+	if err != nil {
+		trs.Rollback()
+		return err
+	}
+
+	fmt.Println("Processing installation through job instance:", id)
 
 	trs.Commit()
 	return nil

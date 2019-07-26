@@ -10,6 +10,6 @@ func main() {
 	shared.ListenAndServe("task", "localhost", 3020, installModule, routes.Setup())
 }
 
-func installModule() error {
+func installModule(moduleID string) error {
 	return install.Init()
 }
